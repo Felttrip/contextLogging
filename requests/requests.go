@@ -2,7 +2,7 @@ package requests
 
 import (
 	"context"
-	"logging/contextkeys"
+	logger "logging/contextLogger"
 	"logging/foo"
 
 	"github.com/sirupsen/logrus"
@@ -14,7 +14,15 @@ type RequestHandler struct {
 }
 
 type Request struct {
-	AccountID string
+	AccountID  string
+	MessageID  string
+	RetryCount int
+	Headers    Headers
+}
+
+type Headers struct {
+	ContentType string
+	Length      int
 }
 
 func NewRequestHandler(l *logrus.Logger) *RequestHandler {
@@ -26,8 +34,10 @@ func NewRequestHandler(l *logrus.Logger) *RequestHandler {
 }
 
 func (r RequestHandler) HandleRequest(ctx context.Context, req Request) {
-	aID := contextkeys.Key("AccountID")
-	ctx = context.WithValue(ctx, aID, req.AccountID)
-	r.logger.WithField("AccountID", ctx.Value(aID)).Info("Handling request")
+	ctx = context.WithValue(ctx, logger.AccountID, req.AccountID)
+	ctx = context.WithValue(ctx, logger.MessageID, req.MessageID)
+	ctx = context.WithValue(ctx, logger.RetryCount, req.RetryCount)
+	ctx = context.WithValue(ctx, logger.Headers, req.Headers)
+	logger.Info(ctx, r.logger, "Handling request")
 	r.f.Bar(ctx)
 }

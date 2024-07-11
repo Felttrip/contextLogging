@@ -2,7 +2,7 @@ package foo
 
 import (
 	"context"
-	"logging/contextkeys"
+	logger "logging/contextLogger"
 
 	"github.com/sirupsen/logrus"
 )
@@ -23,9 +23,6 @@ func NewFooer(l *logrus.Logger) Fooer {
 }
 
 func (s *fooer) Bar(ctx context.Context) error {
-	s.logger.WithFields(logrus.Fields{
-		"AccountID":         ctx.Value(contextkeys.Key("AccountID")),
-		"FieldNotInContext": ctx.Value(contextkeys.Key("notHere")),
-	}).Info("We are in bar!")
+	logger.WithContextInFields(ctx, s.logger).WithField("FooStuffOnlyFooKnowsAbout", "Baz").Info("We're in Bar")
 	return nil
 }
