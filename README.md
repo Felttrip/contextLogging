@@ -1,0 +1,2 @@
+# Context Aware Logging
+This is a toy example of using `context.Context` to share fields that you may want in your structured logs (using logrus) without having to pass around a logrus.Entry to all of the functions that need to log. 
