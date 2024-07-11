@@ -15,7 +15,9 @@ var (
 	Headers    Key = Key("Headers")
 )
 
-func WithContextInFields(ctx context.Context, logger *logrus.Logger) *logrus.Entry {
+type Fields map[Key]any
+
+func WithContextInLog(ctx context.Context, logger *logrus.Logger) *logrus.Entry {
 	return logger.WithFields(logrus.Fields{
 		"AccountID":  ctx.Value(AccountID),
 		"MessageID":  ctx.Value(MessageID),
@@ -23,6 +25,14 @@ func WithContextInFields(ctx context.Context, logger *logrus.Logger) *logrus.Ent
 		"Headers":    ctx.Value(Headers),
 	})
 }
+
+func PackContext(ctx context.Context, f Fields) context.Context {
+	for k, v := range f {
+		ctx = context.WithValue(ctx, k, v)
+	}
+	return ctx
+}
+
 func Info(ctx context.Context, logger *logrus.Logger, msg string) {
 	logger.WithFields(logrus.Fields{
 		"AccountID":  ctx.Value(AccountID),

@@ -8,9 +8,11 @@ import (
 )
 
 func main() {
-	ctx := context.Background()
+	// logger is newed in main and can then be used by further packages
 	logger := logrus.New()
 	r := requests.NewRequestHandler(logger)
+
+	//fake request as an example of things to log
 	req := requests.Request{
 		AccountID:  "AID_1234567890",
 		MessageID:  "MID_8675309",
@@ -20,5 +22,7 @@ func main() {
 			Length:      123,
 		},
 	}
+
+	ctx := context.Background()
 	r.HandleRequest(ctx, req)
 }
